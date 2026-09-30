@@ -7,14 +7,12 @@ class Role(str, Enum):
     UNIVERSIDAD = "universidad"  # oficina de vinculación / transferencia
     ESTUDIANTE = "estudiante"
     ACADEMICO = "academico"      # profesor o investigador (asesor)
-    GOBIERNO = "gobierno"        # municipio o dependencia
     ADMIN = "admin"
 
 
 class OrgType(str, Enum):
     EMPRESA = "empresa"
     UNIVERSIDAD = "universidad"
-    GOBIERNO = "gobierno"
 
 
 class OrgSize(str, Enum):

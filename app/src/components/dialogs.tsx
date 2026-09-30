@@ -5,6 +5,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { pop } from './motion';
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -143,7 +144,7 @@ export function DialogHost() {
           style={{ flex: 1, backgroundColor: 'rgba(15, 30, 50, 0.55)', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           {/* Evita que un toque dentro de la tarjeta la cierre */}
           <Pressable onPress={() => {}} style={{
-            width: '100%', maxWidth: 400, backgroundColor: colors.card, borderRadius: 18, padding: 22, alignItems: 'center',
+            width: '100%', maxWidth: 400, backgroundColor: colors.card, borderRadius: 18, padding: 22, alignItems: 'center', ...pop(0, 420),
             shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 24, shadowOffset: { width: 0, height: 8 }, elevation: 10,
           }}>
             <View style={{

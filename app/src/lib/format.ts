@@ -6,7 +6,6 @@ export const LABELS: Record<string, string> = {
   universidad: 'Universidad',
   estudiante: 'Estudiante',
   academico: 'Académico',
-  gobierno: 'Gobierno',
   admin: 'Administrador',
   // estados de problemática
   borrador: 'Borrador',

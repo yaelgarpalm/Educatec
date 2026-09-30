@@ -35,7 +35,7 @@ Cuentas de demo (después de `python seed.py` en el backend): en el login hay bo
 |---|---|
 | Todos | Login, registro (con alta de organización), perfil y edición, notificaciones con contador, indicadores, directorio de organizaciones, portafolio con evaluaciones |
 | Estudiante / académico | Retos recomendados con % de afinidad y razones, tablero con filtros, NDA, equipos multidisciplinarios (buscar e invitar por carrera o habilidad, asesor), postulación con validación de carreras, mis postulaciones |
-| Empresa / gobierno | Publicar y editar retos (borrador, confidencialidad, PI, modalidades, apoyo económico), cambiar estado, comparar postulaciones con cobertura de disciplinas, aceptar o rechazar, sugerencias de laboratorios y talento |
+| Empresa | Publicar y editar retos (borrador, confidencialidad, PI, modalidades, apoyo económico), cambiar estado, comparar postulaciones con cobertura de disciplinas, aceptar o rechazar, sugerencias de laboratorios y talento |
 | Colaboración | Hitos con entregas y aprobación, chat del reto (se actualiza cada 5 s), evaluación mutua con estrellas |
 | Universidad | Indicadores de vinculación de su institución, publicar y editar capacidades |
 | Admin | Verificar organizaciones |

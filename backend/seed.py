@@ -33,9 +33,7 @@ def run() -> None:
                              sector="Alimentos", city="Atlacomulco", state="Estado de México", verified=True)
     coop = Organization(name="Cooperativa Textil Mazahua", type=OrgType.EMPRESA, size=OrgSize.COOPERATIVA,
                         sector="Textil artesanal", city="San Felipe del Progreso", state="Estado de México")
-    municipio = Organization(name="H. Ayuntamiento de San Felipe del Progreso", type=OrgType.GOBIERNO,
-                             city="San Felipe del Progreso", state="Estado de México", verified=True)
-    db.add_all([tessfp, uaem, panaderia, coop, municipio])
+    db.add_all([tessfp, uaem, panaderia, coop])
     db.flush()
 
     def user(email, name, role, org, **kw):
@@ -48,7 +46,6 @@ def run() -> None:
     user("vinculacion@tessfp.edu.mx", "Oficina de Vinculación TESSFP", Role.UNIVERSIDAD, tessfp)
     laura = user("laura@laespiga.mx", "Laura Pérez", Role.EMPRESA, panaderia)
     rosa = user("rosa@textilmazahua.mx", "Rosa Martínez", Role.EMPRESA, coop)
-    muni = user("innovacion@sanfelipe.gob.mx", "Dirección de Innovación", Role.GOBIERNO, municipio)
     user("dra.martinez@tessfp.edu.mx", "Dra. Elena Martínez", Role.ACADEMICO, tessfp,
          career="Ingeniería en Sistemas Computacionales", skills=["IoT", "Python", "Machine Learning"])
     user("ana@tessfp.edu.mx", "Ana López", Role.ESTUDIANTE, tessfp, semester=6,
@@ -93,13 +90,6 @@ def run() -> None:
                                         "Ingeniería en Gestión Empresarial"],
                   min_disciplines=2, modalities=["servicio_social", "residencia"], duration_weeks=16,
                   ip_model=IPModel.EMPRESA),
-        Challenge(organization_id=municipio.id, created_by_id=muni.id, status=ChallengeStatus.ABIERTO,
-                  title="Reporte ciudadano de fugas de agua",
-                  summary="App para que la ciudadanía reporte fugas con foto y ubicación.",
-                  description="Hoy los reportes llegan por teléfono y se pierden; queremos un mapa de atención.",
-                  category="Gobierno digital", tags=["móvil", "web", "mapas", "bases de datos"],
-                  required_disciplines=["Ingeniería en Sistemas Computacionales", "Ingeniería Civil"], min_disciplines=1,
-                  modalities=["servicio_social", "tesis"], ip_model=IPModel.ABIERTA),
     ])
     db.commit()
     db.close()

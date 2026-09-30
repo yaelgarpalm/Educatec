@@ -121,7 +121,7 @@ def list_challenges(
 
 @router.post("/challenges", response_model=ChallengeOut, status_code=201)
 def create_challenge(data: ChallengeCreate,
-                     user: User = Depends(require_roles(Role.EMPRESA, Role.GOBIERNO)),
+                     user: User = Depends(require_roles(Role.EMPRESA)),
                      db: Session = Depends(get_db)):
     """Una empresa o dependencia publica un problema real."""
     if not user.organization_id:
@@ -312,7 +312,7 @@ def my_proposals(user: User = Depends(get_current_user), db: Session = Depends(g
 
 
 @router.get("/proposals/received", response_model=list[ProposalOut])
-def received_proposals(user: User = Depends(require_roles(Role.EMPRESA, Role.GOBIERNO)),
+def received_proposals(user: User = Depends(require_roles(Role.EMPRESA)),
                        db: Session = Depends(get_db)):
     """Postulaciones recibidas en todas las problemáticas de la organización del usuario."""
     stmt = select(Proposal).join(Challenge, Proposal.challenge_id == Challenge.id)
@@ -503,6 +503,15 @@ def send_message(ch_id: int, data: ChatMessageIn,
         raise HTTPException(422, "Mensaje no válido")
     msg = Message(challenge_id=ch.id, author_id=user.id, body=data.body)
     db.add(msg)
+    # Avisa a las demás personas del proyecto (organización dueña + equipo aceptado)
+    recipients = set(_org_user_ids(db, ch.organization_id))
+    team_id = accepted_team_id(db, ch)
+    if team_id:
+        recipients |= set(_team_user_ids(db, team_id))
+    recipients.discard(user.id)
+    preview = data.body if len(data.body) <= 120 else data.body[:117] + "..."
+    for uid in recipients:
+        notify(db, uid, f"Nuevo mensaje de {user.full_name}", f"{ch.title}: {preview}", f"/retos/{ch.id}/chat")
     db.commit()
     db.refresh(msg)
     return msg

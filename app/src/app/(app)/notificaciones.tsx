@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, Stack, type Href } from 'expo-router';
+import { router, Stack } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { useAction, useApi } from '@/components/hooks';
@@ -7,24 +8,13 @@ import { colors, radius } from '@/components/theme';
 import { Button, Empty, ErrorView, Loading, Muted, Row, Screen, type IconName } from '@/components/ui';
 import { api } from '@/lib/api';
 import { timeAgo } from '@/lib/format';
+import { browserNotifications, toRoute } from '@/lib/notifications';
 import type { Notification, Page } from '@/lib/types';
-
-/** El backend genera rutas en español (/retos/5/hitos); aquí se traducen a las pantallas de la app. */
-function toRoute(link: string | null): Href | null {
-  if (!link) return null;
-  let m = link.match(/^\/retos\/(\d+)(?:\/(\w+))?/);
-  if (m) {
-    const sub = m[2] === 'postulaciones' || m[2] === 'hitos' || m[2] === 'videollamada' ? `/${m[2]}` : '';
-    return `/reto/${m[1]}${sub}` as Href;
-  }
-  if ((m = link.match(/^\/equipos\/(\d+)/))) return `/equipo/${m[1]}` as Href;
-  if ((m = link.match(/^\/perfil\/(\d+)/))) return `/usuario/${m[1]}` as Href;
-  return null;
-}
 
 /** Ícono y color según de qué trata la notificación. */
 function kindOf(n: Notification): { icon: IconName; color: string; soft: string } {
   const t = n.title.toLowerCase();
+  if (t.includes('mensaje')) return { icon: 'chatbubble-ellipses-outline', color: colors.primary, soft: colors.primarySoft };
   if (t.includes('aceptada') || t.includes('aprobado') || t.includes('finalizó'))
     return { icon: 'trophy-outline', color: colors.success, soft: colors.successSoft };
   if (t.includes('no fue seleccionada') || t.includes('rechazada') || t.includes('cancelada') || t.includes('cambios'))
@@ -66,6 +56,25 @@ function NotificationCard({ n, onOpen }: { n: Notification; onOpen: (n: Notifica
   );
 }
 
+/** Invita a activar los avisos del navegador (solo si se puede y aún no se decidió). */
+function EnableBrowserAlerts() {
+  const [perm, setPerm] = useState(browserNotifications.permission());
+  if (perm !== 'default') return null;
+  return (
+    <View style={{
+      flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, marginBottom: 14, borderRadius: radius.lg,
+      backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border,
+    }}>
+      <Ionicons name="notifications-circle" size={30} color={colors.primary} />
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontWeight: '800', color: colors.text }}>Recibe avisos aunque no estés en la página</Text>
+        <Muted>Te avisamos cuando te llegue un mensaje o una novedad.</Muted>
+      </View>
+      <Button small title="Activar avisos" icon="notifications" onPress={async () => setPerm((await browserNotifications.request()) as any)} />
+    </View>
+  );
+}
+
 export default function Notificaciones() {
   const q = useApi<Page<Notification>>('/users/me/notifications', { size: 50 });
   const readAll = useAction(() => api.post('/users/me/notifications/read-all'), {
@@ -86,6 +95,8 @@ export default function Notificaciones() {
   return (
     <Screen onRefresh={q.refetch} refreshing={q.isRefetching}>
       <Stack.Screen options={{ title: 'Notificaciones' }} />
+
+      <EnableBrowserAlerts />
 
       <Row style={{ justifyContent: 'space-between', marginBottom: 12 }}>
         <View>

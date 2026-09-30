@@ -29,7 +29,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=(
-        "API REST para vincular universidades, empresas, estudiantes, académicos y gobierno "
+        "API REST para vincular universidades, empresas, estudiantes y académicos "
         "en la solución colaborativa de problemáticas tecnológicas. Consumible por clientes web "
         "(React/Vue/Angular) y móviles (Flutter/React Native/Kotlin/Swift) mediante JSON + JWT."
     ),

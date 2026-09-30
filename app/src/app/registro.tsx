@@ -1,5 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { CareerPicker } from '@/components/CareerPicker';
 import { Combobox } from '@/components/Combobox';
@@ -11,22 +12,32 @@ import { useAuth } from '@/lib/auth';
 import { splitList } from '@/lib/format';
 import type { Organization, Page, Role } from '@/lib/types';
 
-type OrgType = 'empresa' | 'universidad' | 'gobierno';
+type OrgType = 'empresa' | 'universidad';
 
 const ORG_FOR_ROLE: Record<string, OrgType> = {
-  empresa: 'empresa', gobierno: 'gobierno', universidad: 'universidad', estudiante: 'universidad', academico: 'universidad',
+  empresa: 'empresa', universidad: 'universidad', estudiante: 'universidad', academico: 'universidad',
+};
+const ROLE_CARDS: [string, string, string][] = [
+  ['estudiante', 'Soy estudiante', 'school-outline'],
+  ['academico', 'Soy académico', 'book-outline'],
+  ['empresa', 'Tengo una empresa', 'business-outline'],
+  ['universidad', 'Represento a una universidad', 'library-outline'],
+];
+const ROLE_SHORT: Record<string, string> = {
+  estudiante: 'Resuelve problemas reales en equipo.',
+  academico: 'Asesora equipos y comparte tu experiencia.',
+  empresa: 'Publica un problema y recibe propuestas.',
+  universidad: 'Muestra tus laboratorios y mide resultados.',
 };
 const ROLE_HELP: Record<string, string> = {
   estudiante: 'Forma equipos multidisciplinarios y resuelve problemáticas reales (residencia, servicio social, tesis…).',
   academico: 'Asesora equipos y ofrece tu experiencia como consultor.',
   empresa: 'Publica las problemáticas de tu negocio y recibe propuestas de equipos universitarios.',
-  gobierno: 'Publica problemáticas públicas del municipio o dependencia.',
   universidad: 'Oficina de vinculación: publica laboratorios, equipo y expertos; mide tus indicadores.',
 };
 /** Cómo se llama la organización según el rol ("el nombre de tu empresa", "de tu institución"…). */
 const ORG_WORD: Record<OrgType, { noun: string; example: string }> = {
   empresa: { noun: 'empresa', example: 'Panadería La Espiga' },
-  gobierno: { noun: 'dependencia', example: 'H. Ayuntamiento de San Felipe del Progreso' },
   universidad: { noun: 'institución', example: 'TES San Felipe del Progreso' },
 };
 const ESTADOS = [
@@ -63,9 +74,9 @@ export default function Registro() {
   const orgType = role ? ORG_FOR_ROLE[role] : null;
   const word = orgType ? ORG_WORD[orgType] : null;
   const academic = role === 'estudiante' || role === 'academico';
-  // Empresa, gobierno y universidad registran SU organización (campo de texto, sin lista de otras);
+  // Empresa y universidad registran SU organización (campo de texto, sin lista de otras);
   // estudiantes y académicos eligen de la lista la institución donde estudian o trabajan
-  const registersOrg = role === 'empresa' || role === 'gobierno' || role === 'universidad';
+  const registersOrg = role === 'empresa' || role === 'universidad';
   const { data: orgs } = useApi<Page<Organization>>(academic ? '/organizations' : null, { type: 'universidad', size: 100 });
   const existing = academic ? (orgs?.items ?? []).find((o) => fold(o.name) === fold(org.name)) : undefined;
   const isNewOrg = !!org.name.trim() && !existing;
@@ -112,8 +123,25 @@ export default function Registro() {
   return (
     <Screen>
       <Card>
-        <ChipSelect label="¿Quién eres?" options={(cat?.roles ?? Object.keys(ROLE_HELP)) as Role[]} value={role}
-          onChange={(r) => { if (r) { setRole(r); setOrg({ ...org, name: '' }); setError(null); } }} />
+        <Step n={++step} title="¿Quién eres?" text="Elige lo que mejor te describe; así te mostramos lo que necesitas." />
+        <Row gap={10} style={{ alignItems: 'stretch', marginBottom: 6 }}>
+          {ROLE_CARDS.filter(([r]) => !cat?.roles || (cat.roles as string[]).includes(r)).map(([r, title, icon]) => {
+            const on = role === r;
+            return (
+              <Pressable key={r} accessibilityRole="button" accessibilityState={{ selected: on }}
+                onPress={() => { setRole(r as Role); setOrg({ ...org, name: '' }); setError(null); }}
+                style={({ hovered }: any) => ({
+                  flexGrow: 1, flexBasis: 150, padding: 14, borderRadius: 14, borderWidth: 2,
+                  borderColor: on ? colors.primary : hovered ? '#9DB8D3' : colors.border,
+                  backgroundColor: on ? colors.primarySoft : '#fff',
+                })}>
+                <Ionicons name={icon as any} size={26} color={on ? colors.primary : colors.muted} />
+                <Text style={{ fontWeight: '800', fontSize: 15, color: colors.text, marginTop: 8 }}>{title}</Text>
+                <Text style={{ fontSize: 12.5, color: colors.muted, marginTop: 2, lineHeight: 17 }}>{ROLE_SHORT[r]}</Text>
+              </Pressable>
+            );
+          })}
+        </Row>
         {role && <Muted>{ROLE_HELP[role]}</Muted>}
 
         {/* ---------- 1. Organización ---------- */}

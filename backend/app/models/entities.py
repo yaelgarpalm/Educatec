@@ -117,7 +117,7 @@ class Capability(TimestampMixin, Base):
 
 # ---------------------------------------------------------------- Retos
 class Challenge(TimestampMixin, Base):
-    """Problema publicado por una empresa o dependencia de gobierno."""
+    """Problema publicado por una empresa."""
     __tablename__ = "challenges"
 
     id: Mapped[int] = mapped_column(primary_key=True)

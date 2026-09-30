@@ -67,12 +67,12 @@ function ChallengeForm({ id, initial }: { id?: string; initial: typeof EMPTY }) 
 
       <Section title="El problema">
         <Card>
-          <Field label="Título" value={f.title} onChangeText={set('title')} placeholder="Monitoreo de temperatura en hornos" />
-          <Field label="Resumen público" value={f.summary} onChangeText={set('summary')} multiline
+          <Field required label="Título" value={f.title} onChangeText={set('title')} placeholder="Monitoreo de temperatura en hornos" />
+          <Field required label="Resumen público" value={f.summary} onChangeText={set('summary')} multiline
             hint="Siempre visible, incluso si la problemática es confidencial (10–500 caracteres)." />
           <Field label="Descripción detallada" value={f.description} onChangeText={set('description')} multiline
             hint="Si la problemática es confidencial, solo la ve quien acepte el NDA." />
-          <Field label="Categoría" value={f.category} onChangeText={set('category')} placeholder="IoT, Comercio electrónico, Logística…" />
+          <Field required label="Categoría" value={f.category} onChangeText={set('category')} placeholder="IoT, Comercio electrónico, Logística…" />
           <Field label="Etiquetas" value={f.tags} onChangeText={set('tags')} placeholder="sensores, temperatura, inventarios"
             hint="Separadas por comas. Se usan para sugerir talento y laboratorios." />
         </Card>

@@ -68,5 +68,5 @@ export function useUser(): User {
   return user;
 }
 
-export const isOrgPublisher = (u: User) => u.role === 'empresa' || u.role === 'gobierno' || u.role === 'admin';
+export const isOrgPublisher = (u: User) => u.role === 'empresa' || u.role === 'admin';
 export const isAcademic = (u: User) => u.role === 'estudiante' || u.role === 'academico';

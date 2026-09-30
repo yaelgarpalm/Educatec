@@ -8,6 +8,7 @@ import { Button, Empty, ErrorView, Loading } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useUser } from '@/lib/auth';
 import { label, timeAgo } from '@/lib/format';
+import type { Notification, Page } from '@/lib/types';
 import type { ChatMessage } from '@/lib/types';
 
 export default function Chat() {
@@ -22,6 +23,14 @@ export default function Chat() {
     invalidate: [[`/challenges/${id}/messages`]],
     onSuccess: () => setText(''),
   });
+
+  // Mientras el chat está abierto, los avisos de "Nuevo mensaje" de este proyecto se marcan como leídos
+  const unread = useApi<Page<Notification>>('/users/me/notifications', { unread_only: true, size: 20 }, { refetchInterval: 5_000 });
+  useEffect(() => {
+    (unread.data?.items ?? [])
+      .filter((n) => n.link === `/retos/${id}/chat`)
+      .forEach((n) => api.post(`/users/me/notifications/${n.id}/read`).then(() => unread.refetch()).catch(() => {}));
+  }, [unread.data, id]);
 
   useEffect(() => {
     if (q.data?.length) setTimeout(() => list.current?.scrollToEnd({ animated: true }), 50);

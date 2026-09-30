@@ -18,13 +18,12 @@ router = APIRouter(prefix="/auth", tags=["Autenticación"])
 # Qué tipo de organización corresponde a cada rol
 ROLE_ORG = {
     Role.EMPRESA: OrgType.EMPRESA,
-    Role.GOBIERNO: OrgType.GOBIERNO,
     Role.UNIVERSIDAD: OrgType.UNIVERSIDAD,
     Role.ESTUDIANTE: OrgType.UNIVERSIDAD,
     Role.ACADEMICO: OrgType.UNIVERSIDAD,
 }
 
-ORG_OWNER_ROLES = (Role.EMPRESA, Role.GOBIERNO, Role.UNIVERSIDAD)
+ORG_OWNER_ROLES = (Role.EMPRESA, Role.UNIVERSIDAD)
 
 
 def _tokens(user: User) -> Token:

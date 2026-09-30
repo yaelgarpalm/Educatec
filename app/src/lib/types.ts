@@ -1,7 +1,7 @@
 // Tipos que reflejan los esquemas del backend (app/schemas)
 
-export type Role = 'empresa' | 'universidad' | 'estudiante' | 'academico' | 'gobierno' | 'admin';
-export type OrgType = 'empresa' | 'universidad' | 'gobierno';
+export type Role = 'empresa' | 'universidad' | 'estudiante' | 'academico' | 'admin';
+export type OrgType = 'empresa' | 'universidad';
 export type ChallengeStatus = 'borrador' | 'abierto' | 'en_progreso' | 'finalizado' | 'cancelado';
 export type ProposalStatus = 'enviada' | 'aceptada' | 'rechazada' | 'retirada';
 export type MilestoneStatus = 'pendiente' | 'entregado' | 'aprobado' | 'cambios_solicitados';

@@ -77,7 +77,7 @@ export default function Perfil() {
           style={{ alignSelf: 'flex-start', marginTop: 12 }} />
       </Card>
 
-      {(user.role === 'empresa' || user.role === 'gobierno') && <PostulacionesRecibidas />}
+      {user.role === 'empresa' && <PostulacionesRecibidas />}
 
       <Section title="Accesos">
         <Card style={{ paddingVertical: 0 }}>

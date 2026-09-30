@@ -1,13 +1,13 @@
 # VinculaTec API — Backend (Python · FastAPI)
 
-Backend único para la plataforma de vinculación **universidad – empresa – gobierno**. Es una API REST (JSON + JWT), así que la misma API la consumen la **web** (React, Vue, Angular…) y la **app móvil** (Flutter, React Native, Kotlin, Swift). Eso es lo que la hace híbrida.
+Backend único para la plataforma de vinculación **universidad – empresa**. Es una API REST (JSON + JWT), así que la misma API la consumen la **web** (React, Vue, Angular…) y la **app móvil** (Flutter, React Native, Kotlin, Swift). Eso es lo que la hace híbrida.
 
 ## Cómo resuelve cada causa del problema
 
 | Causa | Qué hace el backend |
 |---|---|
 | Falta de visibilidad | Catálogo de **capacidades** universitarias (laboratorios, equipo, expertos, servicios) y directorio de organizaciones y talento |
-| Sin canal común | **Tablero de retos**: empresas y gobierno publican problemas; los equipos se postulan |
+| Sin canal común | **Tablero de retos**: las empresas publican problemas; los equipos se postulan |
 | Burocracia, confidencialidad y PI | NDA con un clic por reto, **modelo de propiedad intelectual** declarado desde la publicación y flujo de estados (sin convenios de meses) |
 | Trabajo aislado por carreras | Regla **multidisciplinaria**: el reto exige un mínimo de carreras distintas y se calcula la *cobertura de disciplinas* de cada equipo |
 | Desconfianza mutua | Organizaciones **verificadas**, hitos con entregables aprobados, **evaluaciones mutuas** y reputación, y bandera de apoyo económico (`offers_stipend`) |
@@ -33,7 +33,7 @@ uvicorn app.main:app --reload --host 0.0.0.0
 
 ## Roles
 
-`empresa` · `gobierno` publican retos · `universidad` (oficina de vinculación) publica capacidades · `estudiante` y `academico` forman equipos y se postulan · `admin` verifica organizaciones.
+`empresa` publica retos · `universidad` (oficina de vinculación) publica capacidades · `estudiante` y `academico` forman equipos y se postulan · `admin` verifica organizaciones.
 
 ## Endpoints principales (`/api/v1`)
 

@@ -1,14 +1,26 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
+import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { DialogHost } from '@/components/dialogs';
-import { colors } from '@/components/theme';
-import { Loading } from '@/components/ui';
+import '@/lib/webStyle';
+import { colors, pageBg } from '@/components/theme';
+import { GlassBar, Loading } from '@/components/ui';
 import { AuthProvider, useAuth } from '@/lib/auth';
+
+/** En el dominio real siempre se usa https (y sin "www"), para que el API acepte la conexión. */
+if (Platform.OS === 'web' && typeof window !== 'undefined') {
+  const { protocol, hostname, pathname, search, hash } = window.location;
+  if (hostname.endsWith('vinculatec.online') && (protocol === 'http:' || hostname.startsWith('www.'))) {
+    window.location.replace(`https://vinculatec.online${pathname}${search}${hash}`);
+  }
+}
+
+/** Tema de navegación transparente: deja ver el fondo degradado que hay detrás del vidrio. */
+const navTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: 'transparent', card: 'transparent', border: 'transparent', primary: colors.primary, text: colors.text } };
 
 function RootNavigator() {
   const { user, loading } = useAuth();
@@ -22,10 +34,12 @@ function RootNavigator() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.primary },
-        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: 'transparent' },
+        headerBackground: () => <GlassBar />,
+        headerShadowVisible: false,
+        headerTintColor: colors.text,
         headerTitleStyle: { fontWeight: '700' },
-        contentStyle: { backgroundColor: colors.bg },
+        contentStyle: pageBg,
         headerBackTitle: 'Atrás',
       }}
     >
@@ -51,8 +65,10 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={client}>
         <AuthProvider>
-          <StatusBar style="light" />
-          <RootNavigator />
+          <StatusBar style="dark" />
+          <ThemeProvider value={navTheme}>
+            <RootNavigator />
+          </ThemeProvider>
           <DialogHost />
         </AuthProvider>
       </QueryClientProvider>

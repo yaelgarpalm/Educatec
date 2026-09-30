@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { View } from 'react-native';
 
 import { useAction, useApi } from '@/components/hooks';
 import { colors } from '@/components/theme';
@@ -39,6 +40,21 @@ function Info({ icon, title, value }: { icon: any; title: string; value?: string
   );
 }
 
+function Key({ icon, title, value }: { icon: any; title: string; value: string }) {
+  return (
+    <View style={{
+      flexGrow: 1, flexBasis: 120, backgroundColor: colors.card, borderRadius: 14, padding: 12,
+      borderWidth: 1, borderColor: colors.border,
+    }}>
+      <Row gap={6} style={{ flexWrap: 'nowrap' }}>
+        <Ionicons name={icon} size={15} color={colors.primary} />
+        <Muted style={{ fontSize: 12.5 }}>{title}</Muted>
+      </Row>
+      <Body style={{ fontWeight: '800', fontSize: 16, marginTop: 2 }}>{value}</Body>
+    </View>
+  );
+}
+
 export default function RetoDetalle() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const user = useUser();
@@ -68,7 +84,7 @@ export default function RetoDetalle() {
 
   return (
     <Screen onRefresh={() => { q.refetch(); props.refetch(); }} refreshing={q.isRefetching}>
-      <Stack.Screen options={{ title: `Problemática #${ch.id}` }} />
+      <Stack.Screen options={{ title: 'Detalle de la problemática' }} />
 
       <Row gap={6}>
         <StatusBadge status={ch.status} />
@@ -78,6 +94,25 @@ export default function RetoDetalle() {
       <Title>{ch.title}</Title>
       <Muted>{ch.organization_name} · publicada {shortDate(ch.created_at)}</Muted>
       <Body style={{ marginTop: 10, fontSize: 16 }}>{ch.summary}</Body>
+
+      {/* Datos clave: lo primero que la persona necesita para decidir */}
+      <Row gap={10} style={{ marginTop: 14 }}>
+        <Key icon="cash-outline" title="Apoyo" value={ch.budget_mxn ? money(ch.budget_mxn) : ch.offers_stipend ? 'Sí' : 'No'} />
+        <Key icon="time-outline" title="Duración" value={ch.duration_weeks ? `${ch.duration_weeks} sem.` : '—'} />
+        <Key icon="calendar-outline" title="Cierra" value={ch.deadline ? shortDate(ch.deadline) : 'Sin fecha'} />
+        <Key icon="people-outline" title="Postulaciones" value={String(ch.proposals_count)} />
+      </Row>
+
+      {academic && ch.status === 'abierto' && !ch.nda_required && !(props.data ?? []).some((p) => p.status !== 'retirada' && p.status !== 'rechazada') && (
+        <Card style={{ marginTop: 14, backgroundColor: colors.primarySoft, borderColor: colors.primarySoft }}>
+          <H2>¿Te interesa esta problemática?</H2>
+          <Muted style={{ marginTop: 2, marginBottom: 10 }}>
+            Postúlate con tu equipo multidisciplinario. Si aún no tienes uno, puedes armarlo en el siguiente paso.
+          </Muted>
+          <Button title="Postularme con mi equipo" icon="paper-plane-outline"
+            onPress={() => router.push(`/reto/${id}/postular`)} style={{ alignSelf: 'flex-start' }} />
+        </Card>
+      )}
 
       <Section title="Descripción del problema">
         {ch.nda_required ? (
@@ -113,8 +148,8 @@ export default function RetoDetalle() {
       </Section>
 
       {/* ---------- Estudiante / académico ---------- */}
-      {academic && (
-        <Section title="Participación">
+      {academic && !!props.data?.length && (
+        <Section title="Tu postulación">
           {(props.data ?? []).map((p) => (
             <Card key={p.id}>
               <Row style={{ justifyContent: 'space-between' }}>
@@ -129,11 +164,6 @@ export default function RetoDetalle() {
               )}
             </Card>
           ))}
-          {ch.status === 'abierto' && (
-            <Button title="Postularme con mi equipo" icon="paper-plane-outline" disabled={ch.nda_required}
-              onPress={() => router.push(`/reto/${id}/postular`)} />
-          )}
-          {ch.status === 'abierto' && ch.nda_required && <Muted style={{ marginTop: 6 }}>Primero acepta el acuerdo de confidencialidad.</Muted>}
         </Section>
       )}
 
